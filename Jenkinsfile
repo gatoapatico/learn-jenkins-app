@@ -20,6 +20,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Test') {
             agent {
                 docker {
@@ -29,11 +30,9 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
-                    node --version
-                    npm --version
+                    echo "Testing Stage!"
+                    test -f build/index.html
                     npm test
-                    ls -la
                 '''
             }
         }
