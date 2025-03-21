@@ -28,8 +28,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
-                        echo "Deploying to AWS S3 Ditoval!" > testing.txt
-                        aws s3 cp testing.txt s3://$AWS_S3_BUCKET/testing.txt
+                        echo "Deploying to AWS S3 Ditoval!" > index.html
+                        aws s3 cp index.html s3://$AWS_S3_BUCKET/index.html
                     '''
                 }                
             }
