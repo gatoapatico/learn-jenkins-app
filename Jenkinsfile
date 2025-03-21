@@ -21,11 +21,15 @@ pipeline {
                     args "--entrypoint=''"
                 }
             }
+            environment {
+                AWS_S3_BUCKET = 'learn-jenkins-20250321'
+            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
-                        aws s3 ls
+                        echo "Deploying to AWS S3 Ditoval!" > testing.txt
+                        aws s3 cp testing.txt s3://$AWS_S3_BUCKET/testing.txt
                     '''
                 }                
             }
