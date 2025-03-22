@@ -5,16 +5,35 @@ pipeline {
         NETLIFY_SITE_ID = '2b5460ba-ee93-4661-a34f-10a9e4110845'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
 
     stages {
+        stage('Deploying AWS') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args "--entrypoint=''"
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                        aws --version
+                        aws ecs register-task-definition --cli-input-json aws/task-definition-prod.json
+                    '''
+                }                
+            }
+        }
+
         /* stage('Docker') {
             steps {
                 sh 'docker build -t my-playwright .'
             }
         } */
 
-        stage('Build') {
+        /* stage('Build') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -156,6 +175,6 @@ pipeline {
                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Prod E2E Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
-        }
+        } */
     }
 }
